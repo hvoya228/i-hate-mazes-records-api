@@ -1,11 +1,8 @@
-namespace Records.Data.Models;
+namespace Records.Data.DataTransferObjects;
 
-public class Player : BaseModel
+public class PlayerDto
 {
     public string Name { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
-
-    public Guid BestRecordId { get; set; }
-    public BestRecord BestRecord { get; set; } = null!;
 }

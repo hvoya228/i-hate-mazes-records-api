@@ -15,6 +15,14 @@ public class PlayerConfiguration : IEntityTypeConfiguration<Player>
             .IsRequired();
         
         builder
+            .Property(p => p.Email)
+            .IsRequired();
+        
+        builder
+            .Property(p => p.Password)
+            .IsRequired();
+        
+        builder
             .HasOne(p => p.BestRecord)
             .WithOne(o => o.Player)
             .HasForeignKey<Player>(p => p.BestRecordId);
