@@ -5,7 +5,7 @@ namespace Records.DAL.Repositories;
 
 public class PlayerRepository : GenericRepository<Player>, IPlayerRepository
 {
-    protected PlayerRepository(RecordsContext databaseContext) : base(databaseContext)
+    public PlayerRepository(RecordsContext databaseContext) : base(databaseContext)
     {
     }
 }

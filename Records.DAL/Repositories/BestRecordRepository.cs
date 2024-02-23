@@ -5,7 +5,7 @@ namespace Records.DAL.Repositories;
 
 public class BestRecordRepository : GenericRepository<BestRecord>, IBestRecordRepository
 {
-    protected BestRecordRepository(RecordsContext databaseContext) : base(databaseContext)
+    public BestRecordRepository(RecordsContext databaseContext) : base(databaseContext)
     {
     }
 }

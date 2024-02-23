@@ -22,10 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\" />
-    </ItemGroup>
-
-    <ItemGroup>
+      <ProjectReference Include="..\Records.BLL\Records.BLL.csproj" />
       <ProjectReference Include="..\Records.DAL\Records.DAL.csproj" />
     </ItemGroup>
 
