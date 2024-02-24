@@ -21,21 +21,9 @@ public class BestRecordController : ControllerBase
         return Ok(await _service.Get());
     }
     
-    [HttpPost]
-    public async Task<ActionResult> Insert([FromBody] BestRecordDto modelDto)
-    {
-        return Ok(await _service.Insert(modelDto));
-    }
-    
     [HttpPut]
     public async Task<ActionResult> UpdateById(Guid id, [FromBody] BestRecordDto modelDto)
     {
         return Ok(await _service.UpdateById(id, modelDto));
-    }
-
-    [HttpDelete]
-    public async Task<ActionResult> DeleteById(Guid id)
-    {
-        return Ok(await _service.DeleteById(id));
     }
 }

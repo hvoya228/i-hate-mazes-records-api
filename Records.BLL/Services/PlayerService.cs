@@ -57,8 +57,18 @@ public class PlayerService : IPlayerService
             {
                 modelDto.Id = Guid.NewGuid();
                 
-                //add best records for new player
+                var bestRecordDto = new BestRecordDto()
+                {
+                    Id = Guid.NewGuid(),
+                    PlayerId = modelDto.Id,
+                    TotalScore = 0,
+                    PinkScore = 0,
+                    GreenScore = 0
+                };
                 
+                modelDto.BestRecordId = bestRecordDto.Id;
+                
+                await _unitOfWork.BestRecordRepository.InsertAsync(_mapper.Map<BestRecord>(bestRecordDto));
                 await _unitOfWork.PlayerRepository.InsertAsync(_mapper.Map<Player>(modelDto));
                 await _unitOfWork.SaveChangesAsync();
 
@@ -77,6 +87,9 @@ public class PlayerService : IPlayerService
     {
         try
         {
+            var model = await _unitOfWork.PlayerRepository.GetByIdAsync(id);
+            await _unitOfWork.BestRecordRepository.DeleteAsync(model.BestRecordId);
+            
             await _unitOfWork.PlayerRepository.DeleteAsync(id);
             await _unitOfWork.SaveChangesAsync();
 

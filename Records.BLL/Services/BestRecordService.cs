@@ -49,28 +49,6 @@ public class BestRecordService : IBestRecordService
         }
     }
 
-    public async Task<IBaseResponse<string>> Insert(BestRecordDto? modelDto)
-    {
-        try
-        {
-            if (modelDto is not null)
-            {
-                modelDto.Id = Guid.NewGuid();
-                
-                await _unitOfWork.BestRecordRepository.InsertAsync(_mapper.Map<BestRecord>(modelDto));
-                await _unitOfWork.SaveChangesAsync();
-
-                return CreateBaseResponse<string>("Object inserted!", StatusCode.Ok, resultsCount: 1);
-            }
-
-            return CreateBaseResponse<string>("Objet can`t be empty...", StatusCode.BadRequest);
-        }
-        catch (Exception e)
-        {
-            return CreateBaseResponse<string>(e.Message, StatusCode.InternalServerError);
-        }
-    }
-
     public async Task<IBaseResponse<string>> UpdateById(Guid id, BestRecordDto modelDto)
     {
         try
@@ -81,21 +59,6 @@ public class BestRecordService : IBestRecordService
             await _unitOfWork.SaveChangesAsync();
             
             return CreateBaseResponse<string>("Object updated!", StatusCode.Ok, resultsCount: 1);
-        }
-        catch (Exception e)
-        {
-            return CreateBaseResponse<string>($"{e.Message} or object not found", StatusCode.InternalServerError);
-        }
-    }
-
-    public async Task<IBaseResponse<string>> DeleteById(Guid id)
-    {
-        try
-        {
-            await _unitOfWork.BestRecordRepository.DeleteAsync(id);
-            await _unitOfWork.SaveChangesAsync();
-
-            return CreateBaseResponse<string>("Object deleted!", StatusCode.Ok, resultsCount: 1);
         }
         catch (Exception e)
         {
