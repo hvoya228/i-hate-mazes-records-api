@@ -15,14 +15,20 @@ public class PlayerController : ControllerBase
         _service = service;
     }
     
-    [HttpGet("Get")]
-    public async Task<ActionResult<IEnumerable<PlayerDto>>> Get()
+    [HttpGet("GetBestPlayer")]
+    public async Task<ActionResult<BestPlayerDto>> Get()
     {
-        return Ok(await _service.Get());
+        return Ok(await _service.GetBestPlayer());
+    }
+    
+    [HttpGet("GetById")]
+    public async Task<ActionResult<PlayerDto>> GetById(Guid id)
+    {
+        return Ok(await _service.GetById(id));
     }
     
     [HttpPost]
-    public async Task<ActionResult> Insert([FromBody] PlayerDto modelDto)
+    public async Task<ActionResult<PlayerDto>> Insert([FromBody] PlayerDto modelDto)
     {
         return Ok(await _service.Insert(modelDto));
     }

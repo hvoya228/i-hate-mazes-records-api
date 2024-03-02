@@ -20,36 +20,7 @@ public class BestRecordService : IBestRecordService
         _mapper = mapper;
     }
 
-    public Task<IBaseResponse<BestRecordDto>> GetById(Guid id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<IBaseResponse<IEnumerable<BestRecordDto>>> Get()
-    {
-        try
-        {
-            var models = await _unitOfWork.BestRecordRepository.GetAsync();
-
-            if (models.Count is 0)
-            {
-                return CreateBaseResponse<IEnumerable<BestRecordDto>>("0 objects found", StatusCode.NotFound);
-            }
-
-            var dtoList = new List<BestRecordDto>();
-                
-            foreach (var model in models)
-                dtoList.Add(_mapper.Map<BestRecordDto>(model));
-                
-            return CreateBaseResponse<IEnumerable<BestRecordDto>>("Success!", StatusCode.Ok, dtoList, dtoList.Count);
-        }
-        catch(Exception e) 
-        {
-            return CreateBaseResponse<IEnumerable<BestRecordDto>>(e.Message, StatusCode.InternalServerError);
-        }
-    }
-
-    public async Task<IBaseResponse<string>> UpdateById(Guid id, BestRecordDto modelDto)
+    public async Task<IBaseResponse<string>> Update(BestRecordDto modelDto)
     {
         try
         {

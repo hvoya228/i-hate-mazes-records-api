@@ -15,15 +15,9 @@ public class BestRecordController : ControllerBase
         _service = service;
     }
     
-    [HttpGet("Get")]
-    public async Task<ActionResult<IEnumerable<BestRecordDto>>> Get()
-    {
-        return Ok(await _service.Get());
-    }
-    
     [HttpPut]
-    public async Task<ActionResult> UpdateById(Guid id, [FromBody] BestRecordDto modelDto)
+    public async Task<ActionResult> UpdateById([FromBody] BestRecordDto modelDto)
     {
-        return Ok(await _service.UpdateById(id, modelDto));
+        return Ok(await _service.Update(modelDto));
     }
 }

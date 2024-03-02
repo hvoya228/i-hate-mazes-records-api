@@ -20,66 +20,77 @@ public class PlayerService : IPlayerService
         _mapper = mapper;
     }
 
-    public Task<IBaseResponse<PlayerDto>> GetById(Guid id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<IBaseResponse<IEnumerable<PlayerDto>>> Get()
+    public async Task<IBaseResponse<BestPlayerDto>> GetBestPlayer()
     {
         try
         {
-            var models = await _unitOfWork.PlayerRepository.GetAsync();
+            var bestRecords = await _unitOfWork.BestRecordRepository.GetAsync();
+            var bestPlayerRecord = bestRecords.MaxBy(r => r.TotalScore);
 
-            if (models.Count is 0)
+            if (bestPlayerRecord == null)
+                return CreateBaseResponse("No best player found", StatusCode.NotFound, new BestPlayerDto());
+            
+            var player = await _unitOfWork.PlayerRepository.GetByIdAsync(bestPlayerRecord.PlayerId);
+            var bestPlayerDto = new BestPlayerDto()
             {
-                return CreateBaseResponse<IEnumerable<PlayerDto>>("0 objects found", StatusCode.NotFound);
-            }
+                TotalScore = bestPlayerRecord.TotalScore,
+                Name = player.Name
+            };
+                
+            return CreateBaseResponse("Success!", StatusCode.Ok, bestPlayerDto, 1);
 
-            var dtoList = new List<PlayerDto>();
-                
-            foreach (var model in models)
-                dtoList.Add(_mapper.Map<PlayerDto>(model));
-                
-            return CreateBaseResponse<IEnumerable<PlayerDto>>("Success!", StatusCode.Ok, dtoList, dtoList.Count);
-        }
-        catch(Exception e) 
-        {
-            return CreateBaseResponse<IEnumerable<PlayerDto>>(e.Message, StatusCode.InternalServerError);
-        }
-    }
-
-    public async Task<IBaseResponse<string>> Insert(PlayerDto? modelDto)
-    {
-        try
-        {
-            if (modelDto is not null)
-            {
-                modelDto.Id = Guid.NewGuid();
-                
-                var bestRecordDto = new BestRecordDto()
-                {
-                    Id = Guid.NewGuid(),
-                    PlayerId = modelDto.Id,
-                    TotalScore = 0,
-                    PinkScore = 0,
-                    GreenScore = 0
-                };
-                
-                modelDto.BestRecordId = bestRecordDto.Id;
-                
-                await _unitOfWork.BestRecordRepository.InsertAsync(_mapper.Map<BestRecord>(bestRecordDto));
-                await _unitOfWork.PlayerRepository.InsertAsync(_mapper.Map<Player>(modelDto));
-                await _unitOfWork.SaveChangesAsync();
-
-                return CreateBaseResponse<string>("Object inserted!", StatusCode.Ok, resultsCount: 1);
-            }
-
-            return CreateBaseResponse<string>("Objet can`t be empty...", StatusCode.BadRequest);
         }
         catch (Exception e)
         {
-            return CreateBaseResponse<string>(e.Message, StatusCode.InternalServerError);
+            return CreateBaseResponse<BestPlayerDto>(e.Message, StatusCode.InternalServerError);
+        }
+    }
+
+    public async Task<IBaseResponse<PlayerDto>> GetById(Guid id)
+    {
+        try
+        {
+            var player = await _unitOfWork.PlayerRepository.GetByIdAsync(id);
+            var playerDto = _mapper.Map<PlayerDto>(player);
+            
+            return CreateBaseResponse("Success!", StatusCode.Ok, playerDto, 1);
+        }
+        catch (Exception e)
+        {
+            return CreateBaseResponse<PlayerDto>(e.Message, StatusCode.InternalServerError);
+        }
+    }
+
+    public async Task<IBaseResponse<PlayerDto>> Insert(PlayerDto? modelDto)
+    {
+        try
+        {
+            if (modelDto is null)
+                return CreateBaseResponse<PlayerDto>("Objet can`t be empty...", StatusCode.BadRequest);
+            
+            modelDto.Id = Guid.NewGuid();
+                
+            var bestRecordDto = new BestRecordDto()
+            {
+                Id = Guid.NewGuid(),
+                PlayerId = modelDto.Id,
+                TotalScore = 0,
+                PinkScore = 0,
+                GreenScore = 0
+            };
+                
+            modelDto.BestRecordId = bestRecordDto.Id;
+                
+            await _unitOfWork.BestRecordRepository.InsertAsync(_mapper.Map<BestRecord>(bestRecordDto));
+            await _unitOfWork.PlayerRepository.InsertAsync(_mapper.Map<Player>(modelDto));
+            await _unitOfWork.SaveChangesAsync();
+
+            return CreateBaseResponse("Object inserted!", StatusCode.Ok, modelDto, resultsCount: 1);
+
+        }
+        catch (Exception e)
+        {
+            return CreateBaseResponse<PlayerDto>(e.Message, StatusCode.InternalServerError);
         }
     }
 
