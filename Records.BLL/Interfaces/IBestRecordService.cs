@@ -5,5 +5,6 @@ namespace Records.BLL.Interfaces;
 
 public interface IBestRecordService
 {
+    Task<IBaseResponse<BestRecordDto>> GetById(Guid id);
     Task<IBaseResponse<string>> Update(BestRecordDto modelDto);
 }

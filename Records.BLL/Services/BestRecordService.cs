@@ -20,6 +20,22 @@ public class BestRecordService : IBestRecordService
         _mapper = mapper;
     }
 
+
+    public async Task<IBaseResponse<BestRecordDto>> GetById(Guid id)
+    {
+        try
+        {
+            var model = await _unitOfWork.BestRecordRepository.GetByIdAsync(id);
+            var modelDto = _mapper.Map<BestRecordDto>(model);
+
+            return CreateBaseResponse("Success!", StatusCode.Ok, modelDto, 1);
+        }
+        catch (Exception e)
+        {
+            return CreateBaseResponse<BestRecordDto>($"{e.Message} or object not found", StatusCode.InternalServerError);
+        }
+    }
+
     public async Task<IBaseResponse<string>> Update(BestRecordDto modelDto)
     {
         try

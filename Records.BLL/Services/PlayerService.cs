@@ -61,12 +61,52 @@ public class PlayerService : IPlayerService
         }
     }
 
+    public async Task<IBaseResponse<List<PlayerDto>>> Get()
+    {
+        try
+        {
+            var players = await _unitOfWork.PlayerRepository.GetAsync();
+            var playerDtos = _mapper.Map<List<PlayerDto>>(players);
+            
+            return CreateBaseResponse("Success!", StatusCode.Ok, playerDtos, playerDtos.Count);
+        }
+        catch (Exception e)
+        {
+            return CreateBaseResponse<List<PlayerDto>>(e.Message, StatusCode.InternalServerError);
+        }
+    }
+
+    public async Task<IBaseResponse<PlayerDto>> Login(string username, string password)
+    {
+        try
+        {
+            var players = await _unitOfWork.PlayerRepository.GetAsync();
+            
+            var player = players.FirstOrDefault(p => p.Name == username && p.Password == password);
+            
+            return player == null ? 
+                CreateBaseResponse<PlayerDto>("Wrong password or username...", StatusCode.BadRequest) : 
+                CreateBaseResponse("Player login!", StatusCode.Ok, _mapper.Map<PlayerDto>(player), resultsCount: 1);
+        }
+        catch (Exception e)
+        {
+            return CreateBaseResponse<PlayerDto>(e.Message, StatusCode.InternalServerError);
+        }
+    }
+
     public async Task<IBaseResponse<PlayerDto>> Insert(PlayerDto? modelDto)
     {
         try
         {
             if (modelDto is null)
                 return CreateBaseResponse<PlayerDto>("Objet can`t be empty...", StatusCode.BadRequest);
+            
+            var players = await _unitOfWork.PlayerRepository.GetAsync();
+
+            if (players.Any(player => player.Name == modelDto.Name))
+            {
+                return CreateBaseResponse<PlayerDto>("Name already exists...", StatusCode.BadRequest);
+            }
             
             modelDto.Id = Guid.NewGuid();
                 

@@ -16,21 +16,73 @@ public class PlayerController : ControllerBase
     }
     
     [HttpGet("GetBestPlayer")]
-    public async Task<ActionResult<BestPlayerDto>> Get()
+    public async Task<ActionResult<BestPlayerDto>> GetBestPlayer()
     {
-        return Ok(await _service.GetBestPlayer());
+        var response = await _service.GetBestPlayer();
+
+        return response.StatusCode switch
+        {
+            Data.Enums.StatusCode.NotFound => NotFound(response),
+            Data.Enums.StatusCode.InternalServerError => StatusCode(500, response),
+            Data.Enums.StatusCode.BadRequest => BadRequest(response),
+            _ => Ok(response.Data)
+        };
     }
     
     [HttpGet("GetById")]
     public async Task<ActionResult<PlayerDto>> GetById(Guid id)
     {
-        return Ok(await _service.GetById(id));
+        var response = await _service.GetById(id);
+
+        return response.StatusCode switch
+        {
+            Data.Enums.StatusCode.NotFound => NotFound(response),
+            Data.Enums.StatusCode.InternalServerError => StatusCode(500, response),
+            Data.Enums.StatusCode.BadRequest => BadRequest(response),
+            _ => Ok(response.Data)
+        };
     }
     
-    [HttpPost]
+    [HttpGet("Get")]
+    public async Task<ActionResult<List<PlayerDto>>> Get()
+    {
+        var response = await _service.Get();
+
+        return response.StatusCode switch
+        {
+            Data.Enums.StatusCode.NotFound => NotFound(response),
+            Data.Enums.StatusCode.InternalServerError => StatusCode(500, response),
+            Data.Enums.StatusCode.BadRequest => BadRequest(response),
+            _ => Ok(response.Data)
+        };
+    }
+    
+    [HttpGet("Login")]
+    public async Task<ActionResult<PlayerDto>> Login(string username, string password)
+    {
+        var response = await _service.Login(username, password);
+
+        return response.StatusCode switch
+        {
+            Data.Enums.StatusCode.NotFound => NotFound(response),
+            Data.Enums.StatusCode.InternalServerError => StatusCode(500, response),
+            Data.Enums.StatusCode.BadRequest => BadRequest(response),
+            _ => Ok(response.Data)
+        };
+    }
+    
+    [HttpPost("Register")]
     public async Task<ActionResult<PlayerDto>> Insert([FromBody] PlayerDto modelDto)
     {
-        return Ok(await _service.Insert(modelDto));
+        var response = await _service.Insert(modelDto);
+        
+        return response.StatusCode switch
+        {
+            Data.Enums.StatusCode.NotFound => NotFound(response),
+            Data.Enums.StatusCode.InternalServerError => StatusCode(500, response),
+            Data.Enums.StatusCode.BadRequest => BadRequest(response),
+            _ => Ok(response.Data)
+        };
     }
 
     [HttpDelete]
