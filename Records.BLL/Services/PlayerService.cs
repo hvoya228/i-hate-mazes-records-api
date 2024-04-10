@@ -46,6 +46,35 @@ public class PlayerService : IPlayerService
         }
     }
 
+    public async Task<IBaseResponse<List<BestPlayerDto>>> GetBestPlayers()
+    {
+        try
+        {
+            var bestRecords = await _unitOfWork.BestRecordRepository.GetAsync();
+            var bestPlayersRecords = bestRecords.OrderByDescending(r => r.TotalScore).Take(5);
+            
+            var bestPlayersDtos = new List<BestPlayerDto>();
+            
+            foreach (var bestPlayerRecord in bestPlayersRecords)
+            {
+                var bestPlayerDto = new BestPlayerDto()
+                {
+                    TotalScore = bestPlayerRecord.TotalScore,
+                    Name = (await _unitOfWork.PlayerRepository.GetByIdAsync(bestPlayerRecord.PlayerId)).Name
+                };
+                
+                bestPlayersDtos.Add(bestPlayerDto);
+            }
+            
+            return CreateBaseResponse("Success!", StatusCode.Ok, bestPlayersDtos, bestPlayersDtos.Count);
+        }
+        catch (Exception e)
+        {
+            return CreateBaseResponse<List<BestPlayerDto>>(e.Message, StatusCode.InternalServerError);
+        }
+    }
+
+
     public async Task<IBaseResponse<PlayerDto>> GetById(Guid id)
     {
         try

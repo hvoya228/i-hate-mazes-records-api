@@ -6,6 +6,7 @@ namespace Records.BLL.Interfaces;
 public interface IPlayerService
 {
     Task<IBaseResponse<BestPlayerDto>> GetBestPlayer();
+    Task<IBaseResponse<List<BestPlayerDto>>> GetBestPlayers();
     Task<IBaseResponse<PlayerDto>> GetById(Guid id);
     Task<IBaseResponse<List<PlayerDto>>> Get();
     Task<IBaseResponse<PlayerDto>> Login(string username, string password);

@@ -29,6 +29,20 @@ public class PlayerController : ControllerBase
         };
     }
     
+    [HttpGet("GetBestPlayers")]
+    public async Task<ActionResult<List<BestPlayerDto>>> GetBestPlayers()
+    {
+        var response = await _service.GetBestPlayers();
+
+        return response.StatusCode switch
+        {
+            Data.Enums.StatusCode.NotFound => NotFound(response),
+            Data.Enums.StatusCode.InternalServerError => StatusCode(500, response),
+            Data.Enums.StatusCode.BadRequest => BadRequest(response),
+            _ => Ok(response.Data)
+        };
+    }
+    
     [HttpGet("GetById")]
     public async Task<ActionResult<PlayerDto>> GetById(Guid id)
     {
