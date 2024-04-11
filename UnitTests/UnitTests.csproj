@@ -24,6 +24,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Records.API\Records.API.csproj" />
+      <ProjectReference Include="..\Records.BLL\Records.BLL.csproj" />
       <ProjectReference Include="..\Records.DAL\Records.DAL.csproj" />
       <ProjectReference Include="..\Records.Data\Records.Data.csproj" />
     </ItemGroup>
