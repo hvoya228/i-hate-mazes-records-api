@@ -80,6 +80,10 @@ public class PlayerService : IPlayerService
         try
         {
             var player = await _unitOfWork.PlayerRepository.GetByIdAsync(id);
+            
+            if (player == null)
+                return CreateBaseResponse<PlayerDto>("Object not found", StatusCode.NotFound);
+            
             var playerDto = _mapper.Map<PlayerDto>(player);
             
             return CreateBaseResponse("Success!", StatusCode.Ok, playerDto, 1);
