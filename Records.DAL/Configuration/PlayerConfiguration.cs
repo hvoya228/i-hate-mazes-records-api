@@ -12,6 +12,7 @@ public class PlayerConfiguration : IEntityTypeConfiguration<Player>
         
         builder
             .Property(p => p.Name)
+            .HasMaxLength(50)
             .IsRequired();
         
         builder
@@ -20,6 +21,7 @@ public class PlayerConfiguration : IEntityTypeConfiguration<Player>
         
         builder
             .Property(p => p.Password)
+            .HasMaxLength(20)
             .IsRequired();
         
         builder
